@@ -1,0 +1,39 @@
+---
+- name: Create app directory on App server
+  file:
+    path: /opt/todo/app/templates
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    recurse: true
+
+- name: Copy App docker-compose
+  copy:
+    src: docker-compose.yml
+    dest: /opt/todo/docker-compose.yml
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy application files
+  copy:
+    src: "{{ item }}"
+    dest: /opt/todo/app/
+    owner: ubuntu
+    group: ubuntu
+  loop:
+    - app.py
+    - requirements.txt
+    - Dockerfile
+
+- name: Copy HTML template
+  copy:
+    src: index.html
+    dest: /opt/todo/app/templates/index.html
+    owner: ubuntu
+    group: ubuntu
+
+- name: Start Todo App with docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/todo
+    state: present
+    build: always

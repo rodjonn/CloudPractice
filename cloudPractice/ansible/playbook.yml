@@ -1,0 +1,20 @@
+---
+- name: Install Docker on all VMs
+  hosts: all
+  become: true
+  roles:
+    - docker
+
+- name: Deploy MySQL on DB server
+  hosts: db_servers
+  become: true
+  roles:
+    - db
+
+- name: Deploy Todo App on App server
+  hosts: app_servers
+  become: true
+  vars:
+    db_host: "{{ hostvars[groups['db_servers'][0]]['ansible_host'] }}"
+  roles:
+    - app

@@ -1,0 +1,26 @@
+---
+- name: Create app directory on DB server
+  file:
+    path: /opt/todo/db
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy DB docker-compose
+  copy:
+    src: docker-compose.yml
+    dest: /opt/todo/docker-compose.yml
+    owner: ubuntu
+    group: ubuntu
+
+- name: Copy DB init script
+  copy:
+    src: init.sql
+    dest: /opt/todo/db/init.sql
+    owner: ubuntu
+    group: ubuntu
+
+- name: Start MySQL with docker compose
+  community.docker.docker_compose_v2:
+    project_src: /opt/todo
+    state: present
